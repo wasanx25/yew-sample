@@ -551,6 +551,9 @@ dependencies = [
 name = "yew-practice"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "serde",
+ "serde_derive",
  "wasm-bindgen",
  "yew",
 ]
