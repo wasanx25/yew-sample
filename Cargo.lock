@@ -555,5 +555,6 @@ dependencies = [
  "serde",
  "serde_derive",
  "wasm-bindgen",
+ "web-sys",
  "yew",
 ]
