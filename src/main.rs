@@ -120,24 +120,26 @@ impl Component for Model {
 
     fn view(&self) -> Html {
         html! {
-            <div>
-                <button onclick=self.link.callback(|_| Msg::FetchData)>
-                    { "Hoge" }
-                </button>
+            <div class="container">
+                <div class="content">
+                    <button onclick=self.link.callback(|_| Msg::FetchData)>
+                        { "Hoge" }
+                    </button>
 
-                <ul id="item-list">
-                    { for self.data.iter().map(|user| {
-                        html! {
-                            <li id={ format!("item-{:?}", user.id) }
-                                draggable=true
-                                ondrop=self.link.callback(|e: DragEvent| Msg::Drop(e))
-                                ondragover=self.link.callback(|e: DragEvent| Msg::DragOver(e))
-                                ondragstart=self.link.callback(|e: DragEvent| Msg::Drag(e))>
-                                { user.username.to_string() }
-                            </li>
-                        }
-                    })}
-                </ul>
+                    <ul id="item-list">
+                        { for self.data.iter().map(|user| {
+                            html! {
+                                <li id={ format!("item-{:?}", user.id) }
+                                    draggable=true
+                                    ondrop=self.link.callback(|e: DragEvent| Msg::Drop(e))
+                                    ondragover=self.link.callback(|e: DragEvent| Msg::DragOver(e))
+                                    ondragstart=self.link.callback(|e: DragEvent| Msg::Drag(e))>
+                                    { user.username.to_string() }
+                                </li>
+                            }
+                        })}
+                    </ul>
+                </div>
             </div>
         }
     }
