@@ -73,7 +73,7 @@ impl Component for Model {
         html! {
             <div class="container">
                 <div class="user">
-                    <button onclick=self.link.callback(|_| Msg::FetchData)>
+                    <button class="btn waves-effect waves-light" onclick=self.link.callback(|_| Msg::FetchData)>
                         { "Hoge" }
                     </button>
 

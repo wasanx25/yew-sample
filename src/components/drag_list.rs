@@ -2,15 +2,19 @@ use yew::{Component, ComponentLink, DragEvent, html, Html};
 use yew::prelude::*;
 use yew::utils::document;
 use yew::web_sys::{Element, Node};
-use wasm_bindgen::JsCast;
+use wasm_bindgen::{JsCast, JsValue};
+use js_sys::{Array};
 
 use crate::contents::user::User;
+
+const DRAG_OVER_CLASS_NAME: &'static str = "drag-over";
 
 pub enum Msg {
     Ignore,
     Drag(DragEvent),
     Drop(DragEvent),
     DragOver(DragEvent),
+    DragLeave(DragEvent),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
@@ -63,14 +67,36 @@ impl Component for DragList {
 
                         let item_list = d.get_element_by_id("item-list");
                         item_list.unwrap().insert_before(&dragging_node, dropped_node);
+
+                        let class_name = Array::new();
+                        class_name.set(0, JsValue::from(DRAG_OVER_CLASS_NAME));
+
+                        let drag_over_target = e.current_target().unwrap();
+                        let drag_over_element = drag_over_target.dyn_ref::<Element>().unwrap();
+                        drag_over_element.class_list().remove(&class_name);
                         true
                     }
                 }
             }
             Msg::DragOver(e) => {
                 e.prevent_default();
+                let class_name = Array::new();
+                class_name.set(0, JsValue::from(DRAG_OVER_CLASS_NAME));
+
+                let drag_over_target = e.current_target().unwrap();
+                let drag_over_element = drag_over_target.dyn_ref::<Element>().unwrap();
+                drag_over_element.class_list().add(&class_name);
                 true
-            }
+            },
+            Msg::DragLeave(e) => {
+                let class_name = Array::new();
+                class_name.set(0, JsValue::from(DRAG_OVER_CLASS_NAME));
+
+                let drag_over_target = e.current_target().unwrap();
+                let drag_over_element = drag_over_target.dyn_ref::<Element>().unwrap();
+                drag_over_element.class_list().remove(&class_name);
+                true
+            },
         }
     }
 
@@ -85,13 +111,15 @@ impl Component for DragList {
 
     fn view(&self) -> Html {
         html! {
-            <ul id="item-list">
+            <ul id="item-list" class="collection">
                 { for self.props.users.iter().map(|user| {
                     html! {
                         <li id={ format!("item-{:?}", user.id) }
+                            class="collection-item"
                             draggable=true
                             ondrop=self.link.callback(|e: DragEvent| Msg::Drop(e))
                             ondragover=self.link.callback(|e: DragEvent| Msg::DragOver(e))
+                            ondragleave=self.link.callback(|e: DragEvent| Msg::DragLeave(e))
                             ondragstart=self.link.callback(|e: DragEvent| Msg::Drag(e))>
                             { user.username.to_string() }
                         </li>
