@@ -8,6 +8,8 @@ use js_sys::{Array};
 use crate::contents::user::User;
 
 const DRAG_OVER_CLASS_NAME: &'static str = "drag-over";
+const DATA_TRANSFER_NAME: &'static str = "item-id";
+const ITEM_LIST_ID_NAME: &'static str = "item-list";
 
 pub enum Msg {
     Ignore,
@@ -45,7 +47,7 @@ impl Component for DragList {
                     None => {}
                     Some(data) => {
                         let id = e.target().unwrap().dyn_ref::<Element>().unwrap().id();
-                        data.set_data("item-id", &id);
+                        data.set_data(DATA_TRANSFER_NAME, &id);
                     }
                 }
                 true
@@ -57,7 +59,7 @@ impl Component for DragList {
                     }
                     Some(data) => {
                         data.set_drop_effect("move");
-                        let id = data.get_data("item-id").unwrap();
+                        let id = data.get_data(DATA_TRANSFER_NAME).unwrap();
                         let d = document();
                         let dragging_element = d.get_element_by_id(&id).unwrap();
                         let dragging_node = dragging_element.dyn_ref::<Node>().unwrap();
@@ -65,7 +67,7 @@ impl Component for DragList {
                         let dropped_element = e.target().unwrap();
                         let dropped_node = dropped_element.dyn_ref::<Node>();
 
-                        let item_list = d.get_element_by_id("item-list");
+                        let item_list = d.get_element_by_id(ITEM_LIST_ID_NAME);
                         item_list.unwrap().insert_before(&dragging_node, dropped_node);
 
                         let class_name = Array::new();
@@ -87,7 +89,7 @@ impl Component for DragList {
                 let drag_over_element = drag_over_target.dyn_ref::<Element>().unwrap();
                 drag_over_element.class_list().add(&class_name);
                 true
-            },
+            }
             Msg::DragLeave(e) => {
                 let class_name = Array::new();
                 class_name.set(0, JsValue::from(DRAG_OVER_CLASS_NAME));
@@ -96,7 +98,7 @@ impl Component for DragList {
                 let drag_over_element = drag_over_target.dyn_ref::<Element>().unwrap();
                 drag_over_element.class_list().remove(&class_name);
                 true
-            },
+            }
         }
     }
 
@@ -111,7 +113,7 @@ impl Component for DragList {
 
     fn view(&self) -> Html {
         html! {
-            <ul id="item-list" class="collection">
+            <ul id={ITEM_LIST_ID_NAME} class="collection">
                 { for self.props.users.iter().map(|user| {
                     html! {
                         <li id={ format!("item-{:?}", user.id) }
