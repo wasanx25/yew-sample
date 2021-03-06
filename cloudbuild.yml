@@ -1,0 +1,10 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'run', '-i', '-v', '/workspace:/var/local', 'wasanx25/rust-wasm-trunk:latest' ]
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args: ['-m', 'cp', '/workspace/dist/*', 'gs://rust-wasm-trunk-example']
+
+#artifacts:
+#  objects:
+#    location: 'gs://rust-wasm-trunk-example'
+#    paths: ['./dist/*']
